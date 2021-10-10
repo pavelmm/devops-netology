@@ -1,3 +1,11 @@
-# devops-netology
+# Local terraform directories
+/terraform/backup/*
 
-hello
+# Crash log files (файлы логирования)
+/terraform/git-terraform.log
+
+
+
+
+
+
