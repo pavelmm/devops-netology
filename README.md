@@ -1,26 +1,13 @@
-# Local terraform directories
-/terraform/backup/*
-
-# Crash log files (файлы логирования)
-/terraform/git-terraform.log
-
-
-# Local .terraform directories
-**/.terraform/*
-
-# .tfile files
-*.tfile
-*.ttfile.*
-
-# are not checked in
-tfile.tf
-tfile.tf.json
-*_tfile.tf
-*_tfile.tf.json
-
-# Ignore CLI configuration files
-.tfile
-tfile.rc
+#  следующие файлы будут проигнорированы:
+подкаталоги каталога /.terraform/
+файлы, заканчивающиеся на tfstate, либо содержащие tfstate
+crash.log
+файлы, заканчивающиеся на * .tfvars
+override.tf
+override.tf.json
+файлы, заканчивающиеся на _override.tf или _override.tf.json
+.terraformrc
+terraform.rc
 
 
 
