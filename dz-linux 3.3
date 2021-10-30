@@ -2,11 +2,13 @@
 
 1. Какой системный вызов делает команда `cd`? В прошлом ДЗ мы выяснили, что `cd` не является самостоятельной  программой, это `shell builtin`, поэтому запустить `strace` непосредственно на `cd` не получится. Тем не менее, вы можете запустить `strace` на `/bin/bash -c 'cd /tmp'`. В этом случае вы увидите полный список системных вызовов, которые делает сам `bash` при старте. Вам нужно найти тот единственный, который относится именно к `cd`. Обратите внимание, что `strace` выдаёт результат своей работы в поток stderr, а не в stdout.
 Ответ:
-не совсем понял как выполняется задание
-strace -P /bin/bash -c ls /tmp
+pavel@pavel-VirtualBox:~$ strace /bin/bash -c 'cd /tmp'
+execve("/bin/bash", ["/bin/bash", "-c", "cd /tmp"], 0x7fffb2367660 /* 48 vars */) = 0
+........
+stat("/tmp", {st_mode=S_IFDIR|S_ISVTX|0777, st_size=4096, ...}) = 0
+chdir("/tmp")   
 
-
-
+Cкорее всего системный вызов сd это chdir("/tmp") как проверить это только не понятно. Возможно через команду ls -la /tmp Но тут непонятно какой это процесс.
 
 
 2. Попробуйте использовать команду `file` на объекты разных типов на файловой системе. Например:
@@ -19,9 +21,33 @@ strace -P /bin/bash -c ls /tmp
     /bin/bash: ELF 64-bit LSB shared object, x86-64
     ```
     Используя `strace` выясните, где находится база данных `file` на основании которой она делает свои догадки.
+
 Ответ:
-ps aux | grep file
-/usr/bin/dbus-daemon
+pavel@pavel-VirtualBox:~$ strace /bin/bash -c 'file /dev/tty'
+execve("/bin/bash", ["/bin/bash", "-c", "file /dev/tty"], 0x7ffd199ac4f0 /* 48 vars */) = 0
+openat(AT_FDCWD, "/dev/tty", O_RDWR|O_NONBLOCK) = 3
+close(3)   
+......
+xecve("/usr/bin/file", ["file", "/dev/tty"], 0x563b90c7cf60 /* 48 vars */) = 0
+brk(NULL)                               = 0x557b1af96000
+lstat("/dev/tty", {st_mode=S_IFCHR|0666, st_rdev=makedev(0x5, 0), ...}) = 0
+munmap(0x7f2e3ef3b000, 1052672)  
+write(1, "/dev/tty: character special (5/0"..., 34/dev/tty: character special (5/0)
+) = 34
+........
+stat("/home/pavel/.magic.mgc", 0x7ffc1a7dbb90) = -1 ENOENT (Нет такого файла или каталога)
+stat("/home/pavel/.magic", 0x7ffc1a7dbb90) = -1 ENOENT (Нет такого файла или каталога)
+openat(AT_FDCWD, "/etc/magic.mgc", O_RDONLY) = -1 ENOENT (Нет такого файла или каталога)
+stat("/etc/magic", {st_mode=S_IFREG|0644, st_size=111, ...}) = 0
+openat(AT_FDCWD, "/etc/magic", O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=111, ...}) = 0
+read(3, "# Magic local data for file(1) c"..., 4096) = 111
+read(3, "", 4096)                       = 0
+close(3)                                = 0
+openat(AT_FDCWD, "/usr/share/misc/magic.mgc", O_RDONLY) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=5811536, ...}) = 0
+
+Тоже самое и для команды pavel@pavel-VirtualBox:~$ strace /bin/bash -c 'file /dev/sda'  
 
 
 
@@ -128,7 +154,21 @@ Exception: Need super-user privileges to run
 uname
   -a, --all              напечатать всю информацию, в следующем порядке,
                          кроме -p и -i, если они неизвестны:
+                         
+Ответ:
+ваиант 1
+pavel@pavel-VirtualBox:~$ strace uname -a
+execve("/usr/bin/uname", ["uname", "-a"], 0x7fff71513528 /* 48 vars */) = 0
+....
+openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=72762, ...}) = 0
 
+
+вариант 2
+pavel@pavel-VirtualBox:~$ strace /bin/bash -c 'uname() -a /proc'
+.....
+openat(AT_FDCWD, "/usr/share/locale/locale.alias", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=2996, ...}) = 0
 
 
 
