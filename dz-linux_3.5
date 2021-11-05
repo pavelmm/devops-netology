@@ -1,0 +1,223 @@
+1.Узнайте о sparse (разряженных) файлах.
+ОТвет:
+Преимущества и недостатки
+
+Самым большим преимуществом разреженных файлов является то, что пользователь может создавать файлы большого размера, которые занимают очень мало места для хранения. Пространство для хранения выделяется автоматически по мере записи на него данных. Разреженные файлы большого объема создаются за относительно короткое время, поскольку файловой системе не требуется предварительно выделять дисковое пространство для записи нулей.
+
+Преимущества ограничены лишь приложениями, которые их поддерживают. Если у программы нет возможности распознавать или использовать их, то она сохранит их в исходном – несжатом состоянии, что не даст никаких преимуществ. Также с ними нужно быть осторожными, поскольку разреженный файл размером всего несколько мегабайт может внезапно увеличиться до нескольких гигабайт, когда неподдерживающие приложения скопируют его в место назначения.
+
+Еще один из недостатков — это то, что нельзя скопировать или создать такой файл, если его номинальный размер превышает доступный объем свободного пространства (или ограничения размера квоты, налагаемые на учетные записи пользователей). Например, если исходный размер (со всеми нулевыми байтами) составляет 500 МБ, а для учетной записи пользователя, используемой для его создания, существует предел квоты в 400 МБ. Это приведет к ошибке даже если фактическое дисковое пространство, занимаемое им, составляет всего 50 МБ на диске.
+
+
+2.Могут ли файлы, являющиеся жесткой ссылкой на один объект, иметь разные права доступа и владельца? Почему?
+Ответ:
+Так как hardlink это ссылка на тот же самый файл и имеет те же права.
+в качестве эксперемента проверил:
+pavel@pavel-VirtualBox:~$ ln hello.txt test_link
+avel@pavel-VirtualBox:~$ ls -ilh
+итого 42M
+535723 -rw-rw-r-- 2 pavel pavel    3 окт 31 09:26  hello.txt
+535723 -rw-rw-r-- 2 pavel pavel    3 окт 31 09:26  test_link
+
+3.Сделайте vagrant destroy на имеющийся инстанс Ubuntu. Замените содержимое Vagrantfile следующим:
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.provider :virtualbox do |vb|
+    lvm_experiments_disk0_path = "/tmp/lvm_experiments_disk0.vmdk"
+    lvm_experiments_disk1_path = "/tmp/lvm_experiments_disk1.vmdk"
+    vb.customize ['createmedium', '--filename', lvm_experiments_disk0_path, '--size', 2560]
+    vb.customize ['createmedium', '--filename', lvm_experiments_disk1_path, '--size', 2560]
+    vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', lvm_experiments_disk0_path]
+    vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', lvm_experiments_disk1_path]
+  end
+end
+
+
+Данная конфигурация создаст новую виртуальную машину с двумя дополнительными неразмеченными дисками по 2.5 Гб.
+
+
+
+
+
+
+Vagrant.configure(2) do |config|
+  # образ системы Ubuntu 20/04 LTS (Bionic Beaver)
+  config.vm.box = "bento/ubuntu-20.04"
+  # не проверять репозиторий на наличие обновлений
+  config.vm.box_check_update = false
+
+  config.vm.provider "virtualbox" do |vb|
+    # имя виртуальной машины
+    vb.name = "ubuntu-2004-test"
+    # объем оперативной памяти
+    vb.memory = 2048
+    # количество ядер процессора
+    vb.cpus = 1
+  end
+  
+  # hostname виртуальной машины
+  config.vm.hostname = "ubuntu-1804-test"
+end
+
+Ответ:
+
+
+PS C:\tes> cd C:\test
+PS C:\test> vagrant init ubuntu/trusty64
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
+PS C:\test> vagrant init -m ubuntu/bionic64
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
+PS C:\test> vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Importing base box 'bento/ubuntu-20.04'...
+==> default: Matching MAC address for NAT networking...
+==> default: Setting the name of the VM: ubuntu-2004-test
+==> default: Clearing any previously set network interfaces...
+==> default: Preparing network interfaces based on configuration...
+    default: Adapter 1: nat
+==> default: Forwarding ports...
+    default: 22 (guest) => 2222 (host) (adapter 1)
+The adapter to attach a forwarded port to was not found. Please
+verify that the given adapter is setup on the machine as a NAT
+interface.
+
+Host port: 2222
+Guest port: 22
+Adapter: 1
+PS C:\test> vagrant ssh
+VM must be running to open SSH connection. Run `vagrant up`
+to start the virtual machine.
+PS C:\test> vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Clearing any previously set network interfaces...
+==> default: Preparing network interfaces based on configuration...
+    default: Adapter 1: nat
+==> default: Forwarding ports...
+    default: 22 (guest) => 2222 (host) (adapter 1)
+==> default: Running 'pre-boot' VM customizations...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+    default: Warning: Connection reset. Retrying...
+    default: Warning: Connection aborted. Retrying...
+    default: Warning: Connection aborted. Retrying...
+    default: Warning: Connection aborted. Retrying...
+    default: Warning: Connection reset. Retrying...
+    default:
+    default: Vagrant insecure key detected. Vagrant will automatically replace
+    default: this with a newly generated keypair for better security.
+    default:
+    default: Inserting generated public key within guest...
+    default: Removing insecure key from the guest if it's present...
+    default: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> default: Machine booted and ready!
+==> default: Checking for guest additions in VM...
+==> default: Setting hostname...
+==> default: Mounting shared folders...
+    default: /vagrant => C:/test
+PS C:\test> vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+PS C:\test> vagrant status
+Current machine states:
+
+default                   running (virtualbox)
+
+The VM is running. To stop this VM, you can run `vagrant halt` to
+shut it down forcefully, or you can run `vagrant suspend` to simply
+suspend the virtual machine. In either case, to restart it again,
+simply run `vagrant up`.
+PS C:\test> vagrant ssh
+Welcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-80-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri 05 Nov 2021 07:17:34 PM UTC
+
+  System load:  0.27              Processes:             100
+  Usage of /:   2.3% of 61.31GB   Users logged in:       0
+  Memory usage: 6%                IPv4 address for eth0: 10.0.2.15
+  Swap usage:   0%
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+vagrant@ubuntu-2004-test:~$ lsblk
+NAME                 MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                    8:0    0   64G  0 disk
+├─sda1                 8:1    0  512M  0 part /boot/efi
+├─sda2                 8:2    0    1K  0 part
+└─sda5                 8:5    0 63.5G  0 part
+  ├─vgvagrant-root   253:0    0 62.6G  0 lvm  /
+  └─vgvagrant-swap_1 253:1    0  980M  0 lvm  [SWAP]
+vagrant@ubuntu-2004-test:~$
+
+
+
+
+Используя fdisk, разбейте первый диск на 2 раздела: 2 Гб, оставшееся пространство.
+
+
+
+4.Используя sfdisk, перенесите данную таблицу разделов на второй диск.
+
+Ответ:
+
+pavel@n:~$ sudo fdisk /dev/sdb
+
+Добро пожаловать в fdisk (util-linux 2.34).
+Изменения останутся только в памяти до тех пор, пока вы не решите записать их.
+Будьте внимательны, используя команду write.
+
+Устройство не содержит стандартной таблицы разделов.
+Создана новая метка DOS с идентификатором 0x1aad1af2.
+
+Команда (m для справки): n       
+Тип раздела
+   p   основной (0 первичный, 0 расширеный, 4 свободно)
+   e   расширенный (контейнер для логических разделов)
+Выберите (по умолчанию - p): 
+
+Используется ответ по умолчанию p
+Номер раздела (1-4, по умолчанию 1): 
+Первый сектор (2048-8388607, по умолчанию 2048): 
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-8388607, по умолчанию 8388607): +2.1GB
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-8388607, по умолчанию 8388607): +2100MB
+
+Создан новый раздел 1 с типом 'Linux' и размером 2 GiB.
+
+Команда (m для справки): n
+Тип раздела
+   p   основной (1 первичный, 0 расширеный, 3 свободно)
+   e   расширенный (контейнер для логических разделов)
+Выберите (по умолчанию - p): 
+
+Используется ответ по умолчанию p
+Номер раздела (2-4, по умолчанию 2): 
+Первый сектор (4104192-8388607, по умолчанию 4104192): 
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (4104192-8388607, по умолчанию 8388607): 
+
+Создан новый раздел 2 с типом 'Linux' и размером 2 GiB.
+
+Команда (m для справки): w
+Таблица разделов была изменена.
+Вызывается ioctl() для перечитывания таблицы разделов.
+Синхронизируются диски.
+
+
+
+Устр-во    Загрузочный  начало   Конец Секторы Размер Идентификатор Тип
+/dev/sdb1                 2048 4104191 4102144     2G            83 Linux
+/dev/sdb2              4104192 8388607 4284416     2G            83 Linux
