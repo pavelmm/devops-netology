@@ -1,0 +1,625 @@
+1.Узнайте о sparse (разряженных) файлах.
+ОТвет:
+Преимущества и недостатки
+
+Самым большим преимуществом разреженных файлов является то, что пользователь может создавать файлы большого размера, которые занимают очень мало места для хранения. Пространство для хранения выделяется автоматически по мере записи на него данных. Разреженные файлы большого объема создаются за относительно короткое время, поскольку файловой системе не требуется предварительно выделять дисковое пространство для записи нулей.
+
+Преимущества ограничены лишь приложениями, которые их поддерживают. Если у программы нет возможности распознавать или использовать их, то она сохранит их в исходном – несжатом состоянии, что не даст никаких преимуществ. Также с ними нужно быть осторожными, поскольку разреженный файл размером всего несколько мегабайт может внезапно увеличиться до нескольких гигабайт, когда неподдерживающие приложения скопируют его в место назначения.
+
+Еще один из недостатков — это то, что нельзя скопировать или создать такой файл, если его номинальный размер превышает доступный объем свободного пространства (или ограничения размера квоты, налагаемые на учетные записи пользователей). Например, если исходный размер (со всеми нулевыми байтами) составляет 500 МБ, а для учетной записи пользователя, используемой для его создания, существует предел квоты в 400 МБ. Это приведет к ошибке даже если фактическое дисковое пространство, занимаемое им, составляет всего 50 МБ на диске.
+
+
+2.Могут ли файлы, являющиеся жесткой ссылкой на один объект, иметь разные права доступа и владельца? Почему?
+Ответ:
+Так как hardlink это ссылка на тот же самый файл и имеет те же права.
+в качестве эксперемента проверил:
+pavel@pavel-VirtualBox:~$ ln hello.txt test_link
+avel@pavel-VirtualBox:~$ ls -ilh
+итого 42M
+535723 -rw-rw-r-- 2 pavel pavel    3 окт 31 09:26  hello.txt
+535723 -rw-rw-r-- 2 pavel pavel    3 окт 31 09:26  test_link
+
+3.Сделайте vagrant destroy на имеющийся инстанс Ubuntu. Замените содержимое Vagrantfile следующим:
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.provider :virtualbox do |vb|
+    lvm_experiments_disk0_path = "/tmp/lvm_experiments_disk0.vmdk"
+    lvm_experiments_disk1_path = "/tmp/lvm_experiments_disk1.vmdk"
+    vb.customize ['createmedium', '--filename', lvm_experiments_disk0_path, '--size', 2560]
+    vb.customize ['createmedium', '--filename', lvm_experiments_disk1_path, '--size', 2560]
+    vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', lvm_experiments_disk0_path]
+    vb.customize ['storageattach', :id, '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', lvm_experiments_disk1_path]
+  end
+end
+
+
+Данная конфигурация создаст новую виртуальную машину с двумя дополнительными неразмеченными дисками по 2.5 Гб.
+
+
+
+
+
+
+Vagrant.configure(2) do |config|
+  # образ системы Ubuntu 20/04 LTS (Bionic Beaver)
+  config.vm.box = "bento/ubuntu-20.04"
+  # не проверять репозиторий на наличие обновлений
+  config.vm.box_check_update = false
+
+  config.vm.provider "virtualbox" do |vb|
+    # имя виртуальной машины
+    vb.name = "ubuntu-2004-test"
+    # объем оперативной памяти
+    vb.memory = 2048
+    # количество ядер процессора
+    vb.cpus = 1
+  end
+  
+  # hostname виртуальной машины
+  config.vm.hostname = "ubuntu-1804-test"
+end
+
+Ответ:
+
+в повершеле вводим
+PS C:\tes> cd C:\test
+PS C:\test> vagrant init ubuntu/trusty64
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
+PS C:\test> vagrant init -m ubuntu/bionic64
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
+PS C:\test> vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Importing base box 'bento/ubuntu-20.04'...
+==> default: Matching MAC address for NAT networking...
+==> default: Setting the name of the VM: ubuntu-2004-test
+==> default: Clearing any previously set network interfaces...
+==> default: Preparing network interfaces based on configuration...
+    default: Adapter 1: nat
+==> default: Forwarding ports...
+    default: 22 (guest) => 2222 (host) (adapter 1)
+The adapter to attach a forwarded port to was not found. Please
+verify that the given adapter is setup on the machine as a NAT
+interface.
+
+Host port: 2222
+Guest port: 22
+Adapter: 1
+PS C:\test> vagrant ssh
+VM must be running to open SSH connection. Run `vagrant up`
+to start the virtual machine.
+PS C:\test> vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Clearing any previously set network interfaces...
+==> default: Preparing network interfaces based on configuration...
+    default: Adapter 1: nat
+==> default: Forwarding ports...
+    default: 22 (guest) => 2222 (host) (adapter 1)
+==> default: Running 'pre-boot' VM customizations...
+==> default: Booting VM...
+==> default: Waiting for machine to boot. This may take a few minutes...
+    default: SSH address: 127.0.0.1:2222
+    default: SSH username: vagrant
+    default: SSH auth method: private key
+    default: Warning: Connection reset. Retrying...
+    default: Warning: Connection aborted. Retrying...
+    default: Warning: Connection aborted. Retrying...
+    default: Warning: Connection aborted. Retrying...
+    default: Warning: Connection reset. Retrying...
+    default:
+    default: Vagrant insecure key detected. Vagrant will automatically replace
+    default: this with a newly generated keypair for better security.
+    default:
+    default: Inserting generated public key within guest...
+    default: Removing insecure key from the guest if it's present...
+    default: Key inserted! Disconnecting and reconnecting using new SSH key...
+==> default: Machine booted and ready!
+==> default: Checking for guest additions in VM...
+==> default: Setting hostname...
+==> default: Mounting shared folders...
+    default: /vagrant => C:/test
+PS C:\test> vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+==> default: Machine already provisioned. Run `vagrant provision` or use the `--provision`
+==> default: flag to force provisioning. Provisioners marked to run always will still run.
+PS C:\test> vagrant status
+Current machine states:
+
+default                   running (virtualbox)
+
+The VM is running. To stop this VM, you can run `vagrant halt` to
+shut it down forcefully, or you can run `vagrant suspend` to simply
+suspend the virtual machine. In either case, to restart it again,
+simply run `vagrant up`.
+PS C:\test> vagrant ssh
+Welcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-80-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri 05 Nov 2021 07:17:34 PM UTC
+
+  System load:  0.27              Processes:             100
+  Usage of /:   2.3% of 61.31GB   Users logged in:       0
+  Memory usage: 6%                IPv4 address for eth0: 10.0.2.15
+  Swap usage:   0%
+
+
+This system is built by the Bento project by Chef Software
+More information can be found at https://github.com/chef/bento
+vagrant@ubuntu-2004-test:~$ lsblk
+NAME                 MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda                    8:0    0   64G  0 disk
+├─sda1                 8:1    0  512M  0 part /boot/efi
+├─sda2                 8:2    0    1K  0 part
+└─sda5                 8:5    0 63.5G  0 part
+  ├─vgvagrant-root   253:0    0 62.6G  0 lvm  /
+  └─vgvagrant-swap_1 253:1    0  980M  0 lvm  [SWAP]
+sdb      8:16   0    4G  0 disk 
+sdc      8:32   0  2,5G  0 disk 
+vagrant@ubuntu-2004-test:~$
+
+
+
+
+4.Используя fdisk, разбейте первый диск на 2 раздела: 2 Гб, оставшееся пространство.
+
+
+
+
+Ответ:
+
+pavel@n:~$ sudo fdisk /dev/sdb
+
+Добро пожаловать в fdisk (util-linux 2.34).
+Изменения останутся только в памяти до тех пор, пока вы не решите записать их.
+Будьте внимательны, используя команду write.
+
+Устройство не содержит стандартной таблицы разделов.
+Создана новая метка DOS с идентификатором 0x1aad1af2.
+
+Команда (m для справки): n       
+Тип раздела
+   p   основной (0 первичный, 0 расширеный, 4 свободно)
+   e   расширенный (контейнер для логических разделов)
+Выберите (по умолчанию - p): 
+
+Используется ответ по умолчанию p
+Номер раздела (1-4, по умолчанию 1): 
+Первый сектор (2048-8388607, по умолчанию 2048): 
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-8388607, по умолчанию 8388607): +2.1GB
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (2048-8388607, по умолчанию 8388607): +2100MB
+
+Создан новый раздел 1 с типом 'Linux' и размером 2 GiB.
+
+Команда (m для справки): n
+Тип раздела
+   p   основной (1 первичный, 0 расширеный, 3 свободно)
+   e   расширенный (контейнер для логических разделов)
+Выберите (по умолчанию - p): 
+
+Используется ответ по умолчанию p
+Номер раздела (2-4, по умолчанию 2): 
+Первый сектор (4104192-8388607, по умолчанию 4104192): 
+Last sector, +/-sectors or +/-size{K,M,G,T,P} (4104192-8388607, по умолчанию 8388607): 
+
+Создан новый раздел 2 с типом 'Linux' и размером 2 GiB.
+
+Команда (m для справки): w
+Таблица разделов была изменена.
+Вызывается ioctl() для перечитывания таблицы разделов.
+Синхронизируются диски.
+
+
+
+Устр-во    Загрузочный  начало   Конец Секторы Размер Идентификатор Тип
+/dev/sdb1                 2048 4104191 4102144     2G            83 Linux
+/dev/sdb2              4104192 8388607 4284416     2G            83 Linux
+
+
+5.Используя sfdisk, перенесите данную таблицу разделов на второй диск.
+
+Ответ:
+pavel@n:~$ sudo passwd root
+Новый пароль : 
+Повторите ввод нового пароля : 
+passwd: пароль успешно обновлён
+pavel@n:~$ su root
+Пароль: 
+root@n:/home/pavel# sfdisk -d /dev/sdb|sfdisk --force /dev/sdc
+Проверяется, чтобы сейчас никто не использовал этот диск... ОК
+
+Диск /dev/sdc: 2,51 GiB, 2684354560 байт, 5242880 секторов
+Disk model: VBOX HARDDISK   
+Единицы: секторов по 1 * 512 = 512 байт
+Размер сектора (логический/физический): 512 байт / 512 байт
+Размер I/O (минимальный/оптимальный): 512 байт / 512 байт
+
+>>> Заголовок скрипта принят.
+>>> Заголовок скрипта принят.
+>>> Заголовок скрипта принят.
+>>> Заголовок скрипта принят.
+>>> Создана новая метка DOS с идентификатором 0x1aad1af2.
+/dev/sdc1: Создан новый раздел 1 с типом 'Linux' и размером 2 GiB.
+/dev/sdc2: Создан новый раздел 2 с типом 'Linux' и размером 556 MiB.
+/dev/sdc3: Готово.
+
+Новая ситуация:
+Тип метки диска: dos
+Идентификатор диска: 0x1aad1af2
+
+Устр-во    Загрузочный  начало   Конец Секторы Размер Идентификатор Тип
+/dev/sdc1                 2048 4104191 4102144     2G            83 Linux
+/dev/sdc2              4104192 5242879 1138688   556M            83 Linux
+
+Таблица разделов была изменена
+Вызывается ioctl() для перечитывания таблицы разделов.
+Синхронизируются диски.
+
+
+6.Соберите mdadm RAID1 на паре разделов 2 Гб.
+Ответ:
+root@n:/home/pavel# mdadm --create --verbose /dev/md1 -l 1 -n 2 /dev/sd{b1,c1}
+mdadm: Note: this array has metadata at the start and
+    may not be suitable as a boot device.  If you plan to
+    store '/boot' on this device please ensure that
+    your boot-loader understands md/v1.x metadata, or use
+    --metadata=0.90
+mdadm: size set to 2049024K
+Continue creating array? y
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md1 started.
+
+Проверяем так ли это в файле:
+root@n:/home/pavel# cat /etc/mdadm.conf
+cat: /etc/mdadm.conf: Нет такого файла или каталога
+root@n:/home/pavel# cat /proc/mdstat
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md1 : active raid1 sdc1[1] sdb1[0]
+      2049024 blocks super 1.2 [2/2] [UU]
+      
+unused devices: <none>
+
+
+7.Соберите mdadm RAID0 на второй паре маленьких разделов.
+Ответ:
+root@n:/home/pavel# mdadm --create --verbose /dev/md0 -l 1 -n 2 /dev/sd{b2,c2}
+mdadm: Note: this array has metadata at the start and
+    may not be suitable as a boot device.  If you plan to
+    store '/boot' on this device please ensure that
+    your boot-loader understands md/v1.x metadata, or use
+    --metadata=0.90
+mdadm: size set to 566272K
+mdadm: largest drive (/dev/sdb2) exceeds size (566
+272K) by more than 1%
+Continue creating array? y       
+mdadm: Defaulting to version 1.2 metadata
+mdadm: array /dev/md0 started.
+root@n:/home/pavel# cat /proc/mdstat
+Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid1 sdc2[1] sdb2[0]
+      566272 blocks super 1.2 [2/2] [UU]
+      
+md1 : active raid1 sdc1[1] sdb1[0]
+      2049024 blocks super 1.2 [2/2] [UU]
+      
+unused devices: <none>
+
+8.Создайте 2 независимых PV на получившихся md-устройствах.
+Ответ:
+root@n:/home/pavel# pvcreate /dev/md1 /dev/md0
+  Physical volume "/dev/md1" successfully created.
+  Physical volume "/dev/md0" successfully created.
+проверка так ли это 
+root@n:/home/pavel# sudo pvscan
+  PV /dev/md0                      lvm2 [553,00 MiB]
+  PV /dev/md1                      lvm2 [1,95 GiB]
+  Total: 2 [2,49 GiB] / in use: 0 [0   ] / in no VG: 2 [2,49 GiB]
+root@n:/home/pavel# pvdisplay
+  "/dev/md0" is a new physical volume of "553,00 MiB"
+  --- NEW Physical volume ---
+  PV Name               /dev/md0
+  VG Name               
+  PV Size               553,00 MiB
+  Allocatable           NO
+  PE Size               0   
+  Total PE              0
+  Free PE               0
+  Allocated PE          0
+  PV UUID               emlc6n-6MhO-qHDx-CwDS-T3OC-E2rE-0fkdSM
+   
+  "/dev/md1" is a new physical volume of "1,95 GiB"
+  --- NEW Physical volume ---
+  PV Name               /dev/md1
+  VG Name               
+  PV Size               1,95 GiB
+  Allocatable           NO
+  PE Size               0   
+  Total PE              0
+  Free PE               0
+  Allocated PE          0
+  PV UUID               r4YCWG-Ac0u-onPj-aH9X-jHMh-NDMJ-b1FSGY
+
+
+
+9.Создайте общую volume-group на этих двух PV.
+Ответ:
+root@n:/home/pavel# vgcreate vg1 /dev/md1 /dev/md0
+  Volume group "vg1" successfully created
+root@n:/home/pavel# vgdisplay
+  --- Volume group ---
+  VG Name               vg1
+  System ID             
+  Format                lvm2
+  Metadata Areas        2
+  Metadata Sequence No  1
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                0
+  Open LV               0
+  Max PV                0
+  Cur PV                2
+  Act PV                2
+  VG Size               2,49 GiB
+  PE Size               4,00 MiB
+  Total PE              638
+  Alloc PE / Size       0 / 0   
+  Free  PE / Size       638 / 2,49 GiB
+  VG UUID               RJoHw1-mz3J-ltqV-EpwH-IYGb-duxP-9JpnnA
+
+
+10.Создайте LV размером 100 Мб, указав его расположение на PV с RAID0.
+Ответ:
+root@n:/home/pavel# lvcreate -L 100M vg1 /dev/md0
+  Logical volume "lvol0" created.
+root@n:/home/pavel# vgs
+  VG  #PV #LV #SN Attr   VSize VFree
+  vg1   2   1   0 wz--n- 2,49g 2,39g
+root@n:/home/pavel# lvs
+  LV    VG  Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  lvol0 vg1 -wi-a----- 100,00m   
+
+11.Создайте mkfs.ext4 ФС на получившемся LV.
+Ответ:
+root@n:/home/pavel# mkfs.ext4 /dev/vg1/lvol0
+mke2fs 1.45.5 (07-Jan-2020)
+Creating filesystem with 25600 4k blocks and 25600 inodes
+
+Allocating group tables: done                            
+Сохранение таблицы inod'ов: done                            
+Создание журнала (1024 блоков): готово
+Writing superblocks and filesystem accounting information: готово
+
+root@n:/home/pavel# mkfs.ext4 -v /dev/vg1/lvol0
+mke2fs 1.45.5 (07-Jan-2020)
+/dev/vg1/lvol0 contains a ext4 file system
+	created on Sun Nov  7 09:04:03 2021
+Proceed anyway? (y,N) y
+fs_types for mke2fs.conf resolution: 'ext4', 'small'
+Метка файловой системы=
+OS type: Linux
+Block size=4096 (log=2)
+Fragment size=4096 (log=2)
+Stride=0 blocks, Stripe width=0 blocks
+25600 inodes, 25600 blocks
+1280 blocks (5.00%) reserved for the super user
+Первый блок данных=0
+Maximum filesystem blocks=27262976
+1 block group
+32768 blocks per group, 32768 fragments per group
+25600 inod'ов в группе
+
+Allocating group tables: done                            
+Сохранение таблицы inod'ов: done                            
+Создание журнала (1024 блоков): готово
+Writing superblocks and filesystem accounting information: готово
+
+root@n:/home/pavel# 
+
+
+12.Смонтируйте этот раздел в любую директорию, например, /tmp/new.
+Ответ:
+root@n:/home/pavel# mkdir /tmp/new
+root@n:/home/pavel# mount /dev/vg1/lvol0 /tmp/new
+root@n:/home/pavel# mount -v /dev/vg1/lvol0 /tmp/new
+mount: /tmp/new: /dev/mapper/vg1-lvol0 уже смонтирован в /tmp/new.
+
+
+13.Поместите туда тестовый файл, например wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz.
+Ответ:
+root@n:/home/pavel# wget https://mirror.yandex.ru/ubuntu/ls-lR.gz -O /tmp/new/test.gz
+--2021-11-07 09:26:22--  https://mirror.yandex.ru/ubuntu/ls-lR.gz
+Распознаётся mirror.yandex.ru (mirror.yandex.ru)... 213.180.204.183, 2a02:6b8::183
+Подключение к mirror.yandex.ru (mirror.yandex.ru)|213.180.204.183|:443... соединение установлено.
+HTTP-запрос отправлен. Ожидание ответа... 200 OK
+Длина: 22234256 (21M) [application/octet-stream]
+Сохранение в каталог: ««/tmp/new/test.gz»».
+
+/tmp/new/test.gz    100%[==================>]  21,20M  5,18MB/s    за 4,1s    
+
+2021-11-07 09:26:27 (5,15 MB/s) - «/tmp/new/test.gz» сохранён [22234256/22234256]
+
+root@n:/home/pavel# 
+
+
+
+14.Прикрепите вывод lsblk.
+Ответ:
+root@n:/home/pavel# lsblk
+NAME            MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
+loop0             7:0    0    4K  1 loop  /snap/bare/5
+loop1             7:1    0 55,4M  1 loop  /snap/core18/2128
+loop2             7:2    0 55,5M  1 loop  /snap/core18/2246
+loop3             7:3    0 65,1M  1 loop  /snap/gtk-common-themes/1515
+loop4             7:4    0  219M  1 loop  /snap/gnome-3-34-1804/72
+loop5             7:5    0 65,2M  1 loop  /snap/gtk-common-themes/1519
+loop6             7:6    0   51M  1 loop  /snap/snap-store/547
+loop7             7:7    0 32,3M  1 loop  /snap/snapd/12704
+loop8             7:8    0 32,5M  1 loop  /snap/snapd/13640
+sda               8:0    0   40G  0 disk  
+├─sda1            8:1    0  512M  0 part  /boot/efi
+├─sda2            8:2    0    1K  0 part  
+└─sda5            8:5    0 39,5G  0 part  /
+sdb               8:16   0    4G  0 disk  
+├─sdb1            8:17   0    2G  0 part  
+│ └─md1           9:1    0    2G  0 raid1 
+└─sdb2            8:18   0    2G  0 part  
+  └─md0           9:0    0  553M  0 raid1 
+    └─vg1-lvol0 253:0    0  100M  0 lvm   /tmp/new
+sdc               8:32   0  2,5G  0 disk  
+├─sdc1            8:33   0    2G  0 part  
+│ └─md1           9:1    0    2G  0 raid1 
+└─sdc2            8:34   0  556M  0 part  
+  └─md0           9:0    0  553M  0 raid1 
+    └─vg1-lvol0 253:0    0  100M  0 lvm   /tmp/new
+sr0              11:0    1 58,3M  0 rom   /media/pavel/VBox_GAs_6.1.28
+root@n:/home/pavel# 
+
+
+
+15.Протестируйте целостность файла:
+
+root@vagrant:~# gzip -t /tmp/new/test.gz
+root@vagrant:~# echo $?
+0
+
+Ответ:
+root@n:/home/pavel# gzip -t /tmp/new/test.gz && echo $?
+0
+
+
+
+
+16.Используя pvmove, переместите содержимое PV с RAID0 на RAID1.
+
+Ответ:
+root@n:/home/pavel# pvmove /dev/md0
+  /dev/md0: Moved: 12,00%
+  /dev/md0: Moved: 100,00%
+root@n:/home/pavel# lsblk
+NAME            MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
+loop0             7:0    0    4K  1 loop  /snap/bare/5
+loop1             7:1    0 55,4M  1 loop  /snap/core18/2128
+loop2             7:2    0 55,5M  1 loop  /snap/core18/2246
+loop3             7:3    0 65,1M  1 loop  /snap/gtk-common-themes/1515
+loop4             7:4    0  219M  1 loop  /snap/gnome-3-34-1804/72
+loop5             7:5    0 65,2M  1 loop  /snap/gtk-common-themes/1519
+loop6             7:6    0   51M  1 loop  /snap/snap-store/547
+loop7             7:7    0 32,3M  1 loop  /snap/snapd/12704
+loop8             7:8    0 32,5M  1 loop  /snap/snapd/13640
+sda               8:0    0   40G  0 disk  
+├─sda1            8:1    0  512M  0 part  /boot/efi
+├─sda2            8:2    0    1K  0 part  
+└─sda5            8:5    0 39,5G  0 part  /
+sdb               8:16   0    4G  0 disk  
+├─sdb1            8:17   0    2G  0 part  
+│ └─md1           9:1    0    2G  0 raid1 
+│   └─vg1-lvol0 253:0    0  100M  0 lvm   /tmp/new
+└─sdb2            8:18   0    2G  0 part  
+  └─md0           9:0    0  553M  0 raid1 
+sdc               8:32   0  2,5G  0 disk  
+├─sdc1            8:33   0    2G  0 part  
+│ └─md1           9:1    0    2G  0 raid1 
+│   └─vg1-lvol0 253:0    0  100M  0 lvm   /tmp/new
+└─sdc2            8:34   0  556M  0 part  
+  └─md0           9:0    0  553M  0 raid1 
+sr0              11:0    1 58,3M  0 rom   /media/pavel/VBox_GAs_6.1.28
+
+
+17.Сделайте --fail на устройство в вашем RAID1 md.
+Ответ:
+
+
+root@n:/home/pavel# mdadm /dev/md1 --fail /dev/sdb1
+mdadm: set /dev/sdb1 faulty in /dev/md1
+root@n:/home/pavel# mdadm -D /dev/md1
+/dev/md1:
+           Version : 1.2
+     Creation Time : Sat Nov  6 09:18:38 2021
+        Raid Level : raid1
+        Array Size : 2049024 (2001.00 MiB 2098.20 MB)
+     Used Dev Size : 2049024 (2001.00 MiB 2098.20 MB)
+      Raid Devices : 2
+     Total Devices : 2
+       Persistence : Superblock is persistent
+
+       Update Time : Sun Nov  7 09:48:43 2021
+             State : clean, degraded 
+    Active Devices : 1
+   Working Devices : 1
+    Failed Devices : 1
+     Spare Devices : 0
+
+Consistency Policy : resync
+
+              Name : n:1  (local to host n)
+              UUID : 7d3c833e:7c84b2b8:5ec0720d:c4fafa11
+            Events : 22
+
+    Number   Major   Minor   RaidDevice State
+       -       0        0        0      removed
+       1       8       33        1      active sync   /dev/sdc1
+
+       0       8       17        -      faulty   /dev/sdb1
+
+
+
+
+18.Подтвердите выводом dmesg, что RAID1 работает в деградированном состоянии.
+Ответ:
+
+
+root@n:/home/pavel# dmesg |grep md1
+[ 1014.744231] md/raid1:md1: not clean -- starting background reconstruction
+[ 1014.744237] md/raid1:md1: active with 2 out of 2 mirrors
+[ 1014.744266] md1: detected capacity change from 0 to 4098048
+[ 1014.747798] md: resync of RAID array md1
+[ 1027.221780] md: md1: resync done.
+[ 1892.283607] md: delaying data-check of md1 until md0 has finished (they share one or more physical units)
+[ 1909.252891] md: data-check of RAID array md1
+[ 2000.142136] md: md1: data-check done.
+[ 6599.422500] md/raid1:md1: Disk failure on sdb1, disabling device.
+               md/raid1:md1: Operation continuing on 1 devices.
+root@n:/home/pavel# 
+
+
+19.Протестируйте целостность файла, несмотря на "сбойный" диск он должен продолжать быть доступен:
+
+root@vagrant:~# gzip -t /tmp/new/test.gz
+root@vagrant:~# echo $?
+0
+Ответ:
+root@n:/home/pavel# gzip -t /tmp/new/test.gz && echo $?
+0
+
+
+
+20.Погасите тестовый хост, vagrant destroy.
+Ответ:
+в повершеле
+PS C:\WINDOWS\system32> cd C:\test
+PS C:\test> vagrant status
+Current machine states:
+
+default                   running (virtualbox)
+
+The VM is running. To stop this VM, you can run `vagrant halt` to
+shut it down forcefully, or you can run `vagrant suspend` to simply
+suspend the virtual machine. In either case, to restart it again,
+simply run `vagrant up`.
+PS C:\test> vagrant destroy
+    default: Are you sure you want to destroy the 'default' VM? [y/N] y
+==> default: Forcing shutdown of VM...
+==> default: Destroying VM and associated drives...
+PS C:\test>
+
+
+
