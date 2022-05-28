@@ -1,7 +1,7 @@
 Ответ:
 Схемы :
-[files](https://github.com/pavelmm/devops-netology/tree/main/files)/files/my_process_bug -для багов.xml)
-[files1](https://github.com/pavelmm/devops-netology/tree/main/files)/my_process -все осстальное.xml)
+[files](https://github.com/pavelmm/devops-netology/tree/main/files)
+[files1](https://github.com/pavelmm/devops-netology/tree/main/files)
 
 
 скрины:
