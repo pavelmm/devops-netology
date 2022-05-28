@@ -1,7 +1,8 @@
 Ответ:
 Схемы :
-[my_process -все осстальное.xml](files/my_process -все осстальное.xml)
-[my_process_bug -для багов.xml](files/my_process_bug -для багов.xml)
+[files](https://github.com/pavelmm/devops-netology/tree/main/files)/files/my_process_bug -для багов.xml)
+[files1](https://github.com/pavelmm/devops-netology/tree/main/files)/my_process -все осстальное.xml)
+
 
 скрины:
 [img.png](screen/Screenshot_1.png)
