@@ -94,9 +94,9 @@ PLAY RECAP *********************************************************************
 linux1                     : ok=2    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 
 ```
-9. Подготовьте README.md файл по своему playbook. В нём должно быть описано: что делает playbook, какие у него есть параметры и теги. `Готово`
+9. Подготовьте README.md файл по своему playbook. В нём должно быть описано: что делает playbook, какие у него есть параметры и теги. ```  https://github.com/pavelmm/devops-netology/blob/main/files/README.md  ```
 10. Готовый playbook выложите в свой репозиторий, поставьте тег `08-ansible-02-playbook` на фиксирующий коммит, в ответ предоставьте ссылку на него.
-https://github.com/pavelmm/devops-netology/blob/main/files/README.md
+``` https://github.com/pavelmm/devops-netology/tree/main/files/8_2_ansible_play  ```
 
 ---
 
