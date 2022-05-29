@@ -1,0 +1,10 @@
+---
+- name: Install Vector for server
+  hosts: all
+  become: yes
+
+  tasks:
+    
+  - name: Install Vector
+    yum: name=https://packages.timber.io/vector/0.21.2/vector-0.21.2-1.x86_64.rpm
+
