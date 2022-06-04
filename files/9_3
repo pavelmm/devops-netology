@@ -1,0 +1,197 @@
+  294  cd 09-ci-03-cicd/
+  295  ls
+  296  nano infrastructure/inventory/cicd/hosts.yml 
+  297  ifconfig
+  298  ls
+  299  cat /root/.ssh/id_rsa.pub 
+  300  nano infrastructure/files/id_rsa.pub
+  301  cd infrastructure/
+  302  ansible-playbook -i inventory/cicd/hosts.yml site.yml 
+  303  ansible-playbook -i inventory/cicd/hosts.yml site.yml -K 
+  304  id -Gn alaricode
+  305  ansible-playbook -i inventory/cicd/hosts.yml site.yml -K 
+  306  cat inventory/cicd/hosts.yml 
+  307  nano inventory/cicd/hosts.yml 
+  308  netstat -plun
+  309  nano inventory/cicd/hosts.yml 
+  310  ssh pavel@51.250.104.152
+  311  ssh pavel@51.250.109.187
+  312  nano inventory/cicd/hosts.yml 
+  313  ansible-playbook -i inventory/cicd/hosts.yml site.yml -K 
+  314  nano inventory/cicd/hosts.yml 
+  315  pwd
+  316  cd /home/p/sonar-scanner-4.7.0.2747-linux/
+  317  export PATH=$(pwd):$PATH
+  318  echo $PATH
+  319  ls
+  320  cd /root/09-ci-03-cicd/infrastructure
+  321  cd ..
+  322  cd example/
+  323  sonar-scanner --version
+  324  echo $PATH
+  325  cp /home/p/sonar-scanner-4.7.0.2747-linux/ /root/09-ci-03-cicd/
+  326  cp -r /home/p/sonar-scanner-4.7.0.2747-linux/ /root/09-ci-03-cicd/
+  327  cd ..
+  328  ls
+  329  cd sonar-scanner-4.7.0.2747-linux/
+  330  export PATH=$(pwd):$PATH
+  331  echo $PATH
+  332  cp -r  /root/09-ci-03-cicd/ /root/09-ci-03-cicd/example/
+  333  cp -r  /root/09-ci-03-cicd/sonar-scanner-4.7.0.2747-linux/ /root/09-ci-03-cicd/example/
+  334  pwd
+  335  cd ../example/
+  336  ls
+  337  cat fail.py 
+  338  echo $PATH
+  339  sonar-scanner --version
+  340  ls
+  341  cd sonar-scanner-4.7.0.2747-linux/
+  342  export PATH=$(pwd):$PATH
+  343  echo $PATH
+  344  ls
+  345  cd ..
+  346  ls
+  347  rm -dfr 09-ci-03-cicd/  sonar-scanner-4.7.0.2747-linux/
+  348  cd ..
+  349  ls
+  350  cd sonar-scanner-4.7.0.2747-linux/
+  351  nano sonar-project.properties
+  352  pwd
+  353  ls
+  354  cd conf/
+  355  nano sonar-scanner.properties 
+  356  ls
+  357  cd ..
+  358  ls
+  359  cd ..
+  360  ls
+  361  rm -dfr sonar-scanner-4.7.0.2747-linux/
+  362  wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+  363  ls
+  364  unzip sonar-scanner-cli-4.7.0.2747-linux.zip
+  365  ls
+  366  cd sonar-scanner-4.7.0.2747-linux/
+  367  ls
+  368  export PATH=$(pwd):$PATH
+  369  echo $PATH
+  370  sonar-scanner --version
+  371  cd ..
+  372  ls
+  373  export PATH=$(pwd):$PATH
+  374  echo $PATH
+  375  env
+  376  env |grep sona
+  377  set
+  378  PATH ='hello'
+  379  env
+  380  $PATH ='hello'
+  381  bash
+  382  ls
+  383  cd 09-ci-03-cicd/
+  384  ls
+  385  cd sonar-scanner-4.7.0.2747-linux/
+  386  export PATH=$(pwd):$PATH
+  387  echo PATH
+  388  echo $PATH
+  389  sonar-scanner --version
+  390  exit
+  391  sonar-scanner --version
+  392  echo $PATH
+  393  vi /etc/environment
+  394  vi /etc/bash.bashrc
+  395  vi /etc/profile
+  396  cd ..
+  397  pwd
+  398  cp /root/09-ci-03-cicd/ /home/p/as
+  399  cp -r /root/09-ci-03-cicd/ /home/p/as
+  400  ls
+  401  cd 09-ci-03-cicd/sonar-scanner-4.7.0.2747-linux/
+  402  ls
+  403  nano conf/sonar-scanner.properties 
+  404  echo $PATH
+  405  unset PATH
+
+
+  439  cd sonar-scanner-4.7.0.2747-linux/
+  440  ls
+  441  pwd
+  442  nano /etc/profile.d/sonar-scanner.sh
+  443  reboot
+  444  source /etc/profile.d/sonar-scanner.sh
+  445  env | grep PATH
+  446  sonar-scanner -v
+  447  sonar-scanner   -Dsonar.projectKey=netology   -Dsonar.sources=.   -Dsonar.host.url=http://51.250.109.187:9000   -Dsonar.login=034679d2a84d4bbf97b5fc6fb33b2a7443b32ef2 -Dsonar.coverage.exclusions=fail.py
+  448  ls
+  449  nano 09-ci-03-cicd/example/fail.py 
+  450  sonar-scanner   -Dsonar.projectKey=netology   -Dsonar.sources=.   -Dsonar.host.url=http://51.250.109.187:9000   -Dsonar.login=034679d2a84d4bbf97b5fc6fb33b2a7443b32ef2 -Dsonar.coverage.exclusions=fail.py
+  451  ls
+  452  nano 09-ci-03-cicd/mvn/pom.xml 
+  453  cd ../..
+  454  ls
+  455  cd root/
+  456  cd 09-ci-03-cicd/
+  457  cat README.md 
+  458  ls
+  459  wget https://dlcdn.apache.org/maven/maven-3/3.8.5/binaries/apache-maven-3.8.5-bin.tar.gz
+  460  ls
+  461  tar xvzf apache-maven-3.8.5-bin.tar.gz
+  462  ls
+  463  nano /etc/profile.d/apache-maven
+  464  pushd apache-maven-3.8.5/bin/
+  465  ls
+  466  export PATH=$(pwd):$PATH
+  467  echo $PATH
+  468  popd
+  469  cd mvn/
+  470  mvn -v
+  471  ls
+  472  nano pom.xml 
+  473  pwd
+  474  nano ../apache-maven-3.8.5/conf/settings.xml 
+  475  mvn 
+  476  nano ../apache-maven-3.8.5/conf/settings.xml 
+  477  nano /root/09-ci-03-cicd/mvn/pom.xml
+  478  pwd
+  479  cd ..
+  480  ;s
+  481  ls
+  482  cd sonar-scanner-4.7.0.2747-linux/
+  483  ls
+  484  cd ..
+  485  ls
+  486  cd apache-maven-3.8.5/
+  487  ls
+  488  cd ../sonar-scanner-4.7.0.2747-linux/
+  489  ls
+  490  cd ..
+  491  ls
+  492  cd apache-maven-3.8.5/
+  493  ls
+  494  cd bin/
+  495  ls\
+  496  ls
+  497  mvn package
+  498  cd ..
+  499  mvn package
+  500  ls
+  501  cd ..
+  502  ls
+  503  cd mvn/
+  504  mvn package
+  505  pushd apache-maven-3.8.5/bin
+  506  cd ..
+  507  cd example/
+  508  pushd apache-maven-3.8.5/bin
+  509  unset PATH
+  510  echo $PATH
+  511  nano /etc/profile.d/apache-maven.sh
+  512  cd /etc/profile.d/
+  513  nano apache-maven.sh
+  514  vi apache-maven.sh
+  515  vi apache.sh
+  516  reboot
+  517  exit
+  518  nano /etc/profile.d/apache-maven.sh
+  519  pwd
+  520  nano /etc/profile.d/apache-maven.sh
+  521  reboot
