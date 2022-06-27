@@ -189,8 +189,6 @@ Finished: SUCCESS
 
 2. Сделать Declarative Pipeline Job, который будет запускать `molecule test` из любого вашего репозитория с ролью.
 
-![image](https://github.com/pavelmm/devops-netology/blob/main/screen/9_4_3.png)
-
 <details><summary>Groovy’s syntax</summary>
 
 ```
