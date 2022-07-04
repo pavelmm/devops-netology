@@ -5,10 +5,10 @@
 
 
 скрины:
-[img.png](screen/Screenshot_1.png)
-[img.png](screen/Screenshot_2.png)
-[img.png](screen/Screenshot_3.png)
-[img.png](screen/Screenshot_4.png)
-[img.png](screen/Screenshot_5.png)
-[img.png](screen/Screenshot_6.png)
+![img.png](screen/9_1_1.png)
+![img.png](screen/9_1_2.png)
+![img.png](screen/9_1_3.png)
+![img.png](screen/9_1_4.png)
+![img.png](screen/9_1_5.png)
+![img.png](screen/9_1_6.png)
 
