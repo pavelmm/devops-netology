@@ -9,14 +9,14 @@ networks:
     driver: bridge
 
 services:
-  elastic:
+  es-hot:
     image: elasticsearch:7.17.2
-    container_name: elastic
+    container_name: es-hot
     environment:
-      - node.name=elastic
+      - node.name=es-hot
       # - node.roles=master,data_hot,data_content
       - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=elastic,es-warm
+      - cluster.initial_master_nodes=es-hot,es-warm
       - discovery.seed_hosts=es-warm
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
@@ -41,8 +41,8 @@ services:
       - node.name=es-warm
       # - node.roles=data_warm,data_content
       - cluster.name=es-docker-cluster
-      - cluster.initial_master_nodes=elastic,es-warm
-      - discovery.seed_hosts=elastic
+      - cluster.initial_master_nodes=es-hot,es-warm
+      - discovery.seed_hosts=es-hot
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
     ulimits:
@@ -60,7 +60,7 @@ services:
     networks:
       - elk
     depends_on:
-      - elastic
+      - es-hot
 
   logstash:
     image: logstash:7.17.2
@@ -85,7 +85,7 @@ services:
     environment:
       - "SERVER_NAME=kibana"
       - "SERVER_HOST=0.0.0.0"
-      - "ELASTICSEARCH_HOSTS=http://elastic:9200"
+      - "ELASTICSEARCH_HOSTS=http://es-hot:9200"
       - "NODE_OPTIONS=--max-old-space-size=400"
     expose:
       - "5601"
@@ -115,4 +115,3 @@ services:
       - elk
     depends_on:
       - logstash
-
