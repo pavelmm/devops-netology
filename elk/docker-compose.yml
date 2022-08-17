@@ -1,9 +1,5 @@
 version: '3.6'
 
-# volumes:
-#   es_hot_data:
-#   es_warm_data:
-
 networks:
   elk:
     driver: bridge
@@ -14,7 +10,6 @@ services:
     container_name: es-hot
     environment:
       - node.name=es-hot
-      # - node.roles=master,data_hot,data_content
       - cluster.name=es-docker-cluster
       - cluster.initial_master_nodes=es-hot,es-warm
       - discovery.seed_hosts=es-warm
@@ -24,8 +19,7 @@ services:
       memlock:
         soft: -1
         hard: -1
-    # volumes:
-    #   - es_hot_data:/usr/share/elasticsearch/data
+
     expose:
       - "9300"
       - "9200"
@@ -49,8 +43,7 @@ services:
       memlock:
         soft: -1
         hard: -1
-    # volumes:
-    #   - es_warm_data:/usr/share/elasticsearch/data
+
     expose:
       - "9300"
       - "9200"
@@ -103,13 +96,9 @@ services:
       - "--strict.perms=false"
     volumes:
       - "./filebeat/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro"
-      #################################
-      ### KVM:
+
       - "/var/lib/docker/containers:/var/lib/docker/containers:ro"
-      ### WSL:
-      # - "/var/log:/var/log/host:ro"
-      # - "/mnt/w/version-pack-data/community/docker/containers:/var/lib/docker/containers:ro"
-      #################################
+
       - "/var/run/docker.sock:/var/run/docker.sock:Z"
     networks:
       - elk
