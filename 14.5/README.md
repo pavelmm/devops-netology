@@ -169,7 +169,6 @@ nc: google.com (64.233.162.102:443): Operation timed out
 command terminated with exit code 1
 
 p@p:~/14.5/2$ cat  22-np-module2.yml 
-cat: nano: Нет такого файла или каталога
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
