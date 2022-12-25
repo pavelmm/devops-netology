@@ -470,7 +470,7 @@ internal_ip_address_public_vm = "192.168.10.26"
 
 ```
 centos@public-vm1:~$ curl ifconfig.me
-158.160.50.101centos@public-vm1:~$ ping ya.ru
+158.160.50.101centos@private-vm1:~$ ping ya.ru
 PING ya.ru (87.250.250.242) 56(84) bytes of data.
 64 bytes from ya.ru (87.250.250.242): icmp_seq=1 ttl=244 time=14.7 ms
 64 bytes from ya.ru (87.250.250.242): icmp_seq=2 ttl=244 time=12.6 ms
