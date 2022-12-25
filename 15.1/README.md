@@ -56,9 +56,9 @@ Resource terraform
 
 
 
-- Написал [конфигурацию](15.1/terraform) terraform  
+- Написал [конфигурацию](terraform) terraform  
 
-- Выполнил init
+
 <details><summary>terraform init</summary>
 
 ```
@@ -92,7 +92,7 @@ commands will detect it and remind you to do so if necessary.
 
 
 ```
-
+</details>
 
 
 
@@ -128,7 +128,7 @@ internal_ip_address_public_vm = "192.168.10.26"
 
 
 
-<details><summaryterraform apply -auto-approve</summary>
+<details><summary>terraform apply -auto-approve</summary>
 
 ```
 
@@ -466,11 +466,11 @@ internal_ip_address_public_vm = "192.168.10.26"
 </details>
 
   
-<details><summary>Подключился к виртуалке в **публичной** сети с **публичным IP**. Проверил что есть интернет. </summary>
+<details><summary>Подключился к виртуалке в публичной сети с публичным IP. Проверил что есть интернет. </summary>
 
 ```
 centos@public-vm1:~$ curl ifconfig.me
-46.138.165.216centos@public-vm1:~$ ping ya.ru
+158.160.50.101centos@public-vm1:~$ ping ya.ru
 PING ya.ru (87.250.250.242) 56(84) bytes of data.
 64 bytes from ya.ru (87.250.250.242): icmp_seq=1 ttl=244 time=14.7 ms
 64 bytes from ya.ru (87.250.250.242): icmp_seq=2 ttl=244 time=12.6 ms
@@ -480,15 +480,14 @@ PING ya.ru (87.250.250.242) 56(84) bytes of data.
 
 </details>
 
-- Подключился к виртуалке во **внутренней** сети и проверил что есть доступ в интернет.  
   
 
-<details><summary>terraform init</summary>
+<details><summary>Подключился к виртуалке во внутренней сети и проверил, что есть доступ в интернет</summary>
 
 ```
 centos@public-vm1:~$ ssh 192.168.20.34
 centos@public-vm1:~$ curl ifconfig.me
-158.160.10.254centos@public-vm1:~$ ping ya.ru
+158.160.47.124centos@public-vm1:~$ ping ya.ru
 PING ya.ru (87.250.250.242) 56(84) bytes of data.
 64 bytes from ya.ru (87.250.250.242): icmp_seq=1 ttl=244 time=14.7 ms
 64 bytes from ya.ru (87.250.250.242): icmp_seq=2 ttl=244 time=12.6 ms
@@ -498,30 +497,18 @@ PING ya.ru (87.250.250.242) 56(84) bytes of data.
 </details>
 
 
-<details><summary>Виртуальные машины в yandex.cloud </summary>
+- Виртуальные машины в yandex.cloud
 
-```
-![img_7.png](15.1/img/Screenshot_4.png) 
-```
+![img.png](img/Screenshot_4.png) 
 
-</details>
+- IP-адреса подсети
 
+![img.png](img/Screenshot_2.png) 
 
-<details><summary>IP-адреса подсети </summary>
+- Таблицы маршрутизации
 
-```
-![img_7.png](15.1/img/Screenshot_2.png) 
-```
-
-</details>
+![img.png](img/Screenshot_3.png) 
 
 
-<details><summary>Таблицы маршрутизации</summary>
-
-```
-![img_7.png](15.1/img/Screenshot_3.png) 
-```
-
-</details>
 
   
